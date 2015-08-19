@@ -3,20 +3,24 @@ package app
 import (
 	"github.com/go-martini/martini"
 	controllers "github.com/playaer/myFirstGoProject/controllers"
+	"github.com/martini-contrib/render"
 )
 
-var m *ClassicMartini
-m := martini.Classic()
-
 func Run() {
-	configureRoutes()
-	m.Run()
-}
+	m := martini.Classic()
+	m.Use(render.Renderer(render.Options{
+		Layout: "layout",
+		Directory: "public/templates",
+	}))
 
-func configureRoutes() {
-	m.Get("/", controllers.User.list)
-	m.Get("/users/", controllers.User.View)
-	m.Get("/users/:id/view/", controllers.User.View)
-	m.Get("/users/:id/edit/", controllers.User.Edit)
-	m.Post("/users/:id/save/", controllers.User.Save)
+
+	userController := new(controllers.UserController)
+
+	m.Get("/", userController.List)
+	m.Get("/users/", userController.List)
+	m.Get("/users/:id/view/", userController.View)
+	m.Get("/users/:id/edit/", userController.Edit)
+	m.Post("/users/:id/save/", userController.Save)
+
+	m.Run()
 }

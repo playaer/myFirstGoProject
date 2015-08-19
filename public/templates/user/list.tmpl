@@ -1,0 +1,14 @@
+<div class="ui celled list">
+    {{range .}}
+    <div class="item">
+        <div class="right floated content">
+            <div class="ui button">Add</div>
+        </div>
+        <i class="big user icon"></i>
+        <div class="content">
+            <div class="header"><a href="/users/{{ .Id }}/view/">{{.FullName}}</a></div>
+            {{.Address}}
+        </div>
+    </div>
+    {{end}}
+</div>

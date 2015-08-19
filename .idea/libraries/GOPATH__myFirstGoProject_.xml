@@ -1,0 +1,17 @@
+<component name="libraryTable">
+  <library name="GOPATH &lt;myFirstGoProject&gt;">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/../.." />
+    </CLASSES>
+    <SOURCES />
+    <excluded>
+      <root url="file://$PROJECT_DIR$/.idea" />
+      <root url="file://$PROJECT_DIR$" />
+      <root url="file://$PROJECT_DIR$/../../codegangsta/inject/.git" />
+      <root url="file://$PROJECT_DIR$/../../oxtoacart/bpool/.git" />
+      <root url="file://$PROJECT_DIR$/.git" />
+      <root url="file://$PROJECT_DIR$/../../go-martini/martini/.git" />
+      <root url="file://$PROJECT_DIR$/../../martini-contrib/render/.git" />
+    </excluded>
+  </library>
+</component>
