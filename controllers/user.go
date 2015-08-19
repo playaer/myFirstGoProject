@@ -45,19 +45,19 @@ func (u *UserController) View(params martini.Params, r render.Render) {
  * Show edit template
  * Route /users/:id/edit/
  */
-func (u *UserController) Edit(params martini.Params, r render.Render) string {
-
-
-	return "user edit" + params["id"]
+func (u *UserController) Edit(params martini.Params, r render.Render) {
+	id := params["id"]
+	users := getUsers()
+	r.HTML(200, "user/edit", users[id])
 }
 
 /**
  * Save user
  * Route /users/:id/save/
  */
-func (u *UserController) Save(params martini.Params) string {
+func (u *UserController) Save(params martini.Params, r render.Render) {
+	id := params["id"]
 
-
-	return ""
+	r.Redirect("/users/" + id + "/view/")
 }
 
