@@ -1,9 +1,10 @@
-package utils
+package di
 
 import (
 	_ "github.com/go-sql-driver/mysql"
 	"database/sql"
 	"github.com/playaer/myFirstGoProject/managers"
+	"github.com/playaer/myFirstGoProject/utils"
 )
 
 var instance DI = &repository{}
@@ -26,10 +27,10 @@ func New() DI {
 func (di *repository) Db() *sql.DB {
 	if (di.db == nil) {
 		db, err := sql.Open("mysql", "root:@/first_go")
-		CheckErr(err, "sql.Open failed")
+		utils.CheckErr(err, "sql.Open failed")
 
 		if err = db.Ping(); err != nil {
-			CheckErr(err, "sql.Ping failed")
+			utils.CheckErr(err, "sql.Ping failed")
 		}
 		di.db = db
 	}
