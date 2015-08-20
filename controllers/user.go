@@ -3,7 +3,6 @@ package controllers
 import (
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
-	"github.com/playaer/myFirstGoProject/di"
 	"strconv"
 	"net/http"
 )
@@ -16,9 +15,7 @@ type UserController struct {
  * Routes '/', '/users/'
  */
 func (u *UserController) List(r render.Render) {
-
-
-	di := di.New()
+	di := *u.di
 	userManager := di.UserManager()
 	all, err := userManager.FindAll()
 	if err != nil {
@@ -33,7 +30,7 @@ func (u *UserController) List(r render.Render) {
  */
 func (u *UserController) View(params martini.Params, r render.Render) {
 
-	di := di.New()
+	di := *u.di
 	userManager := di.UserManager()
 	id := params["id"]
 	user := userManager.FindById(id)
@@ -49,7 +46,7 @@ func (u *UserController) View(params martini.Params, r render.Render) {
  * Route /users/:id/edit/
  */
 func (u *UserController) Edit(params martini.Params, r render.Render) {
-	di := di.New()
+	di := *u.di
 	userManager := di.UserManager()
 	id := params["id"]
 	user := userManager.FindById(id)
@@ -65,7 +62,7 @@ func (u *UserController) Edit(params martini.Params, r render.Render) {
  * Route /users/:id/save/
  */
 func (u *UserController) Save(params martini.Params, req *http.Request, r render.Render) {
-	di := di.New()
+	di := *u.di
 	userManager := di.UserManager()
 	user := userManager.FindById(params["id"])
 	if user == nil {

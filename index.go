@@ -8,5 +8,5 @@ import (
 func main() {
 	di := di.New()
 	di.UserManager().SetDb(di.Db())
-	app.Run()
+	app.Run(&di)
 }

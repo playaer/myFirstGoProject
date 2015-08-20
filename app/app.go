@@ -4,9 +4,10 @@ import (
 	"github.com/go-martini/martini"
 	controllers "github.com/playaer/myFirstGoProject/controllers"
 	"github.com/martini-contrib/render"
+	"github.com/playaer/myFirstGoProject/di"
 )
 
-func Run() {
+func Run(di *di.DI) {
 	m := martini.Classic()
 	m.Use(render.Renderer(render.Options{
 		Layout: "layout",
@@ -15,6 +16,7 @@ func Run() {
 
 
 	userController := new(controllers.UserController)
+	userController.SetDi(di)
 	m.Get("/", userController.List)
 	m.Get("/users/", userController.List)
 	m.Get("/users/:id/view/", userController.View)
@@ -22,10 +24,13 @@ func Run() {
 	m.Post("/users/:id/save/", userController.Save)
 
 	registerController := new(controllers.RegisterController)
+	registerController.SetDi(di)
 	m.Get("/register/", registerController.Register)
 	m.Post("/register/processRegister/", registerController.ProcessRegister)
 
 	authController := new(controllers.AuthController)
+	authController.SetDi(di)
+
 	m.Get("/auth/", authController.Login)
 	m.Post("/auth/processLogin/", authController.ProcessLogin)
 
