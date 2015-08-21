@@ -122,7 +122,7 @@ func (self *UserManager) NewUser() *models.User {
 }
 
 // Crypt password
-// Low security, w/o salt
+// Low security and w/o salt
 func (self *UserManager) CryptPassword(rawPassword string) string {
 	hasher := md5.New()
 	hasher.Write([]byte(rawPassword))
