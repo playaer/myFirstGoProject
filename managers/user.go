@@ -29,7 +29,7 @@ func (self *UserManager) FindAll() ([]*models.User, error) {
 	users := make([]*models.User, 0)
 	for rows.Next() {
 		user := new(models.User)
-		err = rows.Scan(&user.Id, &user.FullName, &user.Address, &user.Phone, &user.Email, &user.Password, &user.Hash, &user.IsActive)
+		err = rows.Scan(&user.Id, &user.FullName, &user.Address, &user.Phone, &user.Email, &user.Password, &user.Hash, &user.IsActive, &user.Token)
 		if err != nil {
 			utils.CheckErr(err, err.Error())
 		}
@@ -50,7 +50,7 @@ func (self *UserManager) FindById(id string) *models.User {
 	if err != nil {
 		utils.CheckErr(err, err.Error())
 	}
-	err = stmt.QueryRow(id).Scan(&user.Id, &user.FullName, &user.Address, &user.Phone, &user.Email, &user.Password, &user.Hash, &user.IsActive)
+	err = stmt.QueryRow(id).Scan(&user.Id, &user.FullName, &user.Address, &user.Phone, &user.Email, &user.Password, &user.Hash, &user.IsActive, &user.Token)
 	if err != nil {
 		utils.CheckErr(err, err.Error())
 	}
@@ -70,7 +70,7 @@ func (self *UserManager) FindActiveByEmail(email string) *models.User {
 	if err != nil {
 		utils.CheckErr(err, err.Error())
 	}
-	err = stmt.QueryRow(email).Scan(&user.Id, &user.FullName, &user.Address, &user.Phone, &user.Email, &user.Password, &user.Hash, &user.IsActive)
+	err = stmt.QueryRow(email).Scan(&user.Id, &user.FullName, &user.Address, &user.Phone, &user.Email, &user.Password, &user.Hash, &user.IsActive, &user.Token)
 	if err != nil {
 		utils.CheckErr(err, err.Error())
 	}
@@ -90,7 +90,7 @@ func (self *UserManager) FindInActiveByHash(hash string) *models.User {
 	if err != nil {
 		utils.CheckErr(err, err.Error())
 	}
-	err = stmt.QueryRow(hash).Scan(&user.Id, &user.FullName, &user.Address, &user.Phone, &user.Email, &user.Password, &user.Hash, &user.IsActive)
+	err = stmt.QueryRow(hash).Scan(&user.Id, &user.FullName, &user.Address, &user.Phone, &user.Email, &user.Password, &user.Hash, &user.IsActive, &user.Token)
 	if err != nil {
 		utils.CheckErr(err, err.Error())
 	}

@@ -42,12 +42,17 @@ func (u *UserController) View(params martini.Params, r render.Render) {
 
 /**
  * Show edit template
- * Route /users/:id/edit/
+ * Route /users/edit/profile/
  */
-func (u *UserController) Edit(params martini.Params, r render.Render) {
+func (u *UserController) Edit(r render.Render) {
 	di := *u.di
+	authManager := di.AuthManager()
+	if !authManager.IsAuthenticated() {
+		r.Error(403)
+		return
+	}
 	userManager := di.UserManager()
-	id := params["id"]
+	id := string(authManager.CurrentUser().Id)
 	user := userManager.FindById(id)
 	if user == nil {
 		r.Error(404)
@@ -58,12 +63,18 @@ func (u *UserController) Edit(params martini.Params, r render.Render) {
 
 /**
  * Save user
- * Route /users/:id/save/
+ * Route /users/save/profile/
  */
-func (u *UserController) Save(params martini.Params, req *http.Request, r render.Render) {
+func (u *UserController) Save(req *http.Request, r render.Render) {
 	di := *u.di
+	authManager := di.AuthManager()
+	if !authManager.IsAuthenticated() {
+		r.Error(403)
+		return
+	}
 	userManager := di.UserManager()
-	user := userManager.FindById(params["id"])
+	id := string(authManager.CurrentUser().Id)
+	user := userManager.FindById(id)
 	if user == nil {
 		r.Error(404)
 		return
@@ -71,13 +82,14 @@ func (u *UserController) Save(params martini.Params, req *http.Request, r render
 
 	newUser := *user
 
-	di.UpdateLogManager().StoreChanges(user, &newUser)
-
 	newUser.FullName = req.FormValue("FullName")
 	newUser.Address = req.FormValue("Address")
 	newUser.Phone = req.FormValue("Phone")
 
 	userManager.Update(&newUser)
-	r.Redirect("/users/" + params["id"] + "/view/")
+
+	di.UpdateLogManager().StoreChanges(user, &newUser)
+
+	r.Redirect("/users/" + id + "/view/")
 }
 

@@ -14,6 +14,7 @@ type DI interface {
 	Db() *sql.DB
 	UserManager() *managers.UserManager
 	UpdateLogManager() *managers.UpdateLogManager
+	AuthManager() *managers.AuthManager
 	Config() *config.Config
 	Mailer() *utils.Mailer
 }
@@ -22,6 +23,7 @@ type repository struct {
 	db *sql.DB
 	userManager *managers.UserManager
 	updateLogManager *managers.UpdateLogManager
+	authManager *managers.AuthManager
 	config *config.Config
 	mailer *utils.Mailer
 }
@@ -63,6 +65,16 @@ func (di *repository) UpdateLogManager() *managers.UpdateLogManager {
 		di.updateLogManager.SetDb(db)
 	}
 	return di.updateLogManager
+}
+
+// Get auth manager
+func (di *repository) AuthManager() *managers.AuthManager {
+	if (di.authManager == nil) {
+		di.authManager = new(managers.AuthManager)
+		db := instance.Db()
+		di.authManager.SetDb(db)
+	}
+	return di.authManager
 }
 
 // Get app config

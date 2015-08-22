@@ -9,4 +9,5 @@ type User struct {
 	Password string
 	Hash string
 	IsActive bool
+	Token string
 }

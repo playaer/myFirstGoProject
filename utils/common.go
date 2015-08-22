@@ -9,7 +9,7 @@ func CheckErr(err error, msg string) {
 }
 
 func Debug(data interface{}) {
-	log.Println(data)
+	log.Println("+++++++++++", data)
 }
 
 func Fatal(data interface{}) {

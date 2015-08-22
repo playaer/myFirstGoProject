@@ -7,10 +7,16 @@ import (
 	"github.com/playaer/myFirstGoProject/di"
 	"html/template"
 	"time"
+	"net/http"
+	"github.com/playaer/myFirstGoProject/managers"
 )
 
 func Run(di *di.DI) {
 	m := martini.Classic()
+
+	d := *di
+	authManager := d.AuthManager()
+	m.Map(authManager)
 	m.Use(render.Renderer(render.Options{
 		Layout: "layout",
 		Directory: "templates",
@@ -23,14 +29,26 @@ func Run(di *di.DI) {
 		},
 	}))
 
+	m.Use(func(req *http.Request, manager *managers.AuthManager) {
+		tokenCookie, err := req.Cookie("gousertoken")
+		if err != nil {
+			return
+		}
+		user, err := manager.FindActiveByToken(tokenCookie.Value)
+		if err != nil || user == nil {
+			return
+		}
+		manager.Auth(user)
+	})
+
 
 	userController := new(controllers.UserController)
 	userController.SetDi(di)
 	m.Get("/", userController.List)
 	m.Get("/users/", userController.List)
 	m.Get("/users/:id/view/", userController.View)
-	m.Get("/users/:id/edit/", userController.Edit)
-	m.Post("/users/:id/save/", userController.Save)
+	m.Get("/users/edit/profile/", userController.Edit)
+	m.Post("/users/save/profile/", userController.Save)
 
 	registerController := new(controllers.RegisterController)
 	registerController.SetDi(di)
@@ -41,6 +59,7 @@ func Run(di *di.DI) {
 	authController := new(controllers.AuthController)
 	authController.SetDi(di)
 	m.Get("/auth/", authController.Login)
+	m.Get("/auth/logout/", authController.LogOut)
 	m.Post("/auth/processLogin/", authController.ProcessLogin)
 
 	updatesController := new(controllers.UpdateLogController)

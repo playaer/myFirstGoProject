@@ -12,6 +12,12 @@ type RegisterController struct {
 
 // Register Action, show register template form
 func (self *RegisterController) Register(params martini.Params, r render.Render) {
+	di := *self.di
+	authManager := di.AuthManager()
+	if !authManager.IsAuthenticated() {
+		r.Error(403)
+		return
+	}
 	r.HTML(200, "register/register", nil)
 }
 

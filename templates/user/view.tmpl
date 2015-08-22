@@ -1,6 +1,3 @@
-<div class="right floated content">
-    <a href="/users/{{ .Id }}/edit/" class="ui button">Edit</a>
-</div>
 <div class="ui segments">
 
     <div class="ui segment center aligned">
@@ -12,6 +9,10 @@
         <tr>
             <td class="right aligned"><strong>Id:</strong></td>
             <td>{{ .Id }}</td>
+        </tr>
+        <tr>
+            <td class="right aligned"><strong>Email:</strong></td>
+            <td>{{ .Email }}</td>
         </tr>
         <tr>
             <td class="right aligned"><strong>Address:</strong></td>

@@ -11,12 +11,32 @@ type AuthController struct {
 }
 
 // Show login template
-func (self *AuthController) Login(params martini.Params, r render.Render) {
-	r.HTML(200, "auth/login", "")
+func (self *AuthController) Login(r render.Render) {
+	di := *self.di
+	authManager := di.AuthManager()
+	if authManager.IsAuthenticated() {
+		r.Error(403)
+		return
+	}
+	r.HTML(200, "auth/login", nil)
+}
+
+// Show login template
+func (self *AuthController) LogOut(w http.ResponseWriter, params martini.Params, r render.Render) {
+	di := *self.di
+	authManager := di.AuthManager()
+	if !authManager.IsAuthenticated() {
+		r.Error(403)
+		return
+	}
+	authManager.Logout()
+	cookie := http.Cookie{Name: "gousertoken", Value: "", Path: "/", MaxAge: -1}
+	http.SetCookie(w, &cookie)
+	r.Redirect("/users/")
 }
 
 // Process login action
-func (self *AuthController) ProcessLogin(params martini.Params, req *http.Request, r render.Render) {
+func (self *AuthController) ProcessLogin(w http.ResponseWriter, req *http.Request, r render.Render) {
 	di := *self.di
 	email := req.FormValue("Email")
 	user := di.UserManager().FindActiveByEmail(email)
@@ -30,6 +50,12 @@ func (self *AuthController) ProcessLogin(params martini.Params, req *http.Reques
 	password := req.FormValue("Password")
 	if di.UserManager().CheckPassword(user, password) {
 		// message: Hello, {userName}
+		authManager := di.AuthManager()
+		token := authManager.GenerateToken(user)
+		// set cookie
+		cookie := http.Cookie{Name: "gousertoken", Value: token, Path: "/"}
+		http.SetCookie(w, &cookie)
+
 		r.Redirect("/users/")
 	} else {
 		// not authorized

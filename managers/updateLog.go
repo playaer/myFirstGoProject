@@ -62,7 +62,7 @@ func (self *UpdateLogManager) saveToDb(userUpdate *models.UserUpdate) int64 {
 func (self *UpdateLogManager) FindAll(userId int64) []*models.UserUpdate {
 
 	db := self.db
-	rows, err := db.Query("SELECT updated_at, old_data, new_data FROM user_update")
+	rows, err := db.Query("SELECT updated_at, old_data, new_data FROM user_update WHERE user_id = ? ORDER BY id DESC", userId)
 	if err != nil {
 		utils.CheckErr(err, err.Error())
 	}
