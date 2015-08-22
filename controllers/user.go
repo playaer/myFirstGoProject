@@ -3,7 +3,6 @@ package controllers
 import (
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
-	"strconv"
 	"net/http"
 )
 
@@ -70,19 +69,15 @@ func (u *UserController) Save(params martini.Params, req *http.Request, r render
 		return
 	}
 
-	// need validate
+	newUser := *user
 
-	id, err := strconv.ParseInt(params["id"], 10, 64)
-	if err != nil {
-		r.Error(500)
-	}
+	di.UpdateLogManager().StoreChanges(user, &newUser)
 
-	user.Id = id
-	user.FullName = req.FormValue("FullName")
-	user.Address = req.FormValue("Address")
-	user.Phone = req.FormValue("Phone")
+	newUser.FullName = req.FormValue("FullName")
+	newUser.Address = req.FormValue("Address")
+	newUser.Phone = req.FormValue("Phone")
 
-	userManager.Update(user)
+	userManager.Update(&newUser)
 	r.Redirect("/users/" + params["id"] + "/view/")
 }
 

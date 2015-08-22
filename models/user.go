@@ -7,4 +7,6 @@ type User struct {
 	Phone string
 	Email string
 	Password string
+	Hash string
+	IsActive bool
 }

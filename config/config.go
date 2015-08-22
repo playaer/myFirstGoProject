@@ -1,10 +1,13 @@
 package config
 
 type Config struct {
+	SiteDomain string
+
 	DbDriver string
 	DbName string
 	DbUser string
 	DbPass string
+	DbParams string
 
 	EmailUser string
 	EmailHost string
@@ -14,13 +17,17 @@ type Config struct {
 
 func New() *Config {
 	return &Config{
+		"http://localhost:3000",
+
 		"mysql",
 		"first_go",
 		"root",
 		"",
-		"test@gmail.com",
+		"?parseTime=true",
+
+		"playaer80@gmail.com",
 		"smtp.gmail.com",
 		"587",
-		"email_password",
+		"L;jqythb1",
 	}
 }

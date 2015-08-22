@@ -2,6 +2,7 @@
     {{range .}}
     <div class="item">
         <div class="right floated content">
+            {{ if not .IsActive }} <span class="ui red tag label">Inactive</span> {{ end }}
             <a href="/users/{{ .Id }}/edit/" class="ui button">Edit</a>
         </div>
         <i class="big user icon"></i>

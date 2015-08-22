@@ -19,18 +19,21 @@ func (self *AuthController) Login(params martini.Params, r render.Render) {
 func (self *AuthController) ProcessLogin(params martini.Params, req *http.Request, r render.Render) {
 	di := *self.di
 	email := req.FormValue("Email")
-	user := di.UserManager().FindByEmail(email)
+	user := di.UserManager().FindActiveByEmail(email)
 	if user == nil {
 		// not authenticated
+		// message: Invalid credentials
 		r.HTML(200, "auth/login", "")
 		return
 	}
 
 	password := req.FormValue("Password")
 	if di.UserManager().CheckPassword(user, password) {
+		// message: Hello, {userName}
 		r.Redirect("/users/")
 	} else {
 		// not authorized
+		// message: Invalid credentials
 		r.HTML(200, "auth/login", "")
 	}
 }

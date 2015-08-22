@@ -13,12 +13,17 @@ type Mailer struct {
 	config *config.Config
 }
 
+func (self *Mailer) New(conf *config.Config) *Mailer {
+	return &Mailer{conf}
+}
+
 type mail struct {
 	From string
 	To []string
 	Message []byte
 }
 
+// Prepare email before send
 func (self *Mailer) BuildRegistrationMail(user *models.User) *mail {
 	config := self.config
 	mailConfig := new(mail)
@@ -30,12 +35,13 @@ func (self *Mailer) BuildRegistrationMail(user *models.User) *mail {
 		"From": config.EmailUser,
 		"To": user.Email,
 		"Subject": "Confirm registration",
-		"Message": "your link",
+		"Hash": user.Hash,
+		"Domain": config.SiteDomain,
 	}
 
 	buffer := new(bytes.Buffer)
-
-	t, _ := template.ParseFiles("mailer/view.html")
+	t, err := template.ParseFiles("templates/mailer/confirm_registration.tmpl")
+	CheckErr(err, "fff")
 	t.Execute(buffer, tplData)
 
 	mailConfig.Message = buffer.Bytes()
@@ -43,6 +49,7 @@ func (self *Mailer) BuildRegistrationMail(user *models.User) *mail {
 	return mailConfig
 }
 
+// Send email
 func (self *Mailer) Send(mailConfig *mail) {
 	config := self.config
 	auth := smtp.PlainAuth("", config.EmailUser, config.EmailPassword, config.EmailHost)

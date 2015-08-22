@@ -5,6 +5,8 @@ import (
 	controllers "github.com/playaer/myFirstGoProject/controllers"
 	"github.com/martini-contrib/render"
 	"github.com/playaer/myFirstGoProject/di"
+	"html/template"
+	"time"
 )
 
 func Run(di *di.DI) {
@@ -12,6 +14,13 @@ func Run(di *di.DI) {
 	m.Use(render.Renderer(render.Options{
 		Layout: "layout",
 		Directory: "templates",
+		Funcs: []template.FuncMap{
+			{
+				"formatTime": func(t *time.Time) string {
+					return t.Format(time.Stamp)
+				},
+			},
+		},
 	}))
 
 
@@ -27,12 +36,16 @@ func Run(di *di.DI) {
 	registerController.SetDi(di)
 	m.Get("/register/", registerController.Register)
 	m.Post("/register/processRegister/", registerController.ProcessRegister)
+	m.Get("/register/activate/:hash/", registerController.ProcessActivate)
 
 	authController := new(controllers.AuthController)
 	authController.SetDi(di)
-
 	m.Get("/auth/", authController.Login)
 	m.Post("/auth/processLogin/", authController.ProcessLogin)
+
+	updatesController := new(controllers.UpdateLogController)
+	updatesController.SetDi(di)
+	m.Get("/updates/", updatesController.List)
 
 	m.Run()
 }

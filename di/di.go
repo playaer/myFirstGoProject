@@ -13,13 +13,17 @@ var instance DI = &repository{}
 type DI interface {
 	Db() *sql.DB
 	UserManager() *managers.UserManager
+	UpdateLogManager() *managers.UpdateLogManager
 	Config() *config.Config
+	Mailer() *utils.Mailer
 }
 
 type repository struct {
 	db *sql.DB
 	userManager *managers.UserManager
+	updateLogManager *managers.UpdateLogManager
 	config *config.Config
+	mailer *utils.Mailer
 }
 
 func New() DI {
@@ -30,7 +34,7 @@ func New() DI {
 func (di *repository) Db() *sql.DB {
 	if (di.db == nil) {
 		config := instance.Config()
-		db, err := sql.Open(config.DbDriver, config.DbUser + ":" + config.DbPass + "@/" + config.DbName)
+		db, err := sql.Open(config.DbDriver, config.DbUser + ":" + config.DbPass + "@/" + config.DbName + config.DbParams)
 		utils.CheckErr(err, "sql.Open failed")
 
 		if err = db.Ping(); err != nil {
@@ -41,7 +45,7 @@ func (di *repository) Db() *sql.DB {
 	return di.db
 }
 
-// Get database instance
+// Get user manager
 func (di *repository) UserManager() *managers.UserManager {
 	if (di.userManager == nil) {
 		di.userManager = new(managers.UserManager)
@@ -51,10 +55,29 @@ func (di *repository) UserManager() *managers.UserManager {
 	return di.userManager
 }
 
+// Get updateLogManager
+func (di *repository) UpdateLogManager() *managers.UpdateLogManager {
+	if (di.updateLogManager == nil) {
+		di.updateLogManager = new(managers.UpdateLogManager)
+		db := instance.Db()
+		di.updateLogManager.SetDb(db)
+	}
+	return di.updateLogManager
+}
+
 // Get app config
 func (di *repository) Config() *config.Config {
 	if (di.config == nil) {
 		di.config = config.New()
 	}
 	return di.config
+}
+
+// Get app config
+func (di *repository) Mailer() *utils.Mailer {
+	if (di.mailer == nil) {
+		mailer := new(utils.Mailer)
+		di.mailer = mailer.New(instance.Config())
+	}
+	return di.mailer
 }

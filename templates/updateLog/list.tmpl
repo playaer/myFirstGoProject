@@ -1,0 +1,30 @@
+<table class="ui definition table">
+    <thead>
+    <tr>
+        <th width="20%"></th>
+        <th width="40%">Before</th>
+        <th width="40%">After</th>
+    </tr></thead>
+    <tbody>
+    {{range $index, $record := .}}
+    <tr>
+        <td colspan="3" class="ui center aligned">{{ $record.UpdatedAt | formatTime }}</td>
+    </tr>
+    <tr>
+        <td>Full Name</td>
+        <td>{{ $record.OldData.FullName }}</td>
+        <td>{{ $record.NewData.FullName }}</td>
+    </tr>
+    <tr>
+        <td>Address</td>
+        <td>{{ $record.OldData.Address }}</td>
+        <td>{{ $record.NewData.Address }}</td>
+    </tr>
+    <tr>
+        <td>Phone</td>
+        <td>{{ $record.OldData.Phone }}</td>
+        <td>{{ $record.NewData.Phone }}</td>
+    </tr>
+    {{ end }}
+    </tbody>
+</table>
