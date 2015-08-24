@@ -27,9 +27,7 @@ func (self *AuthManager) FindActiveByToken(token string) (*models.User, error) {
 	db := self.db
 	user := new(models.User)
 	stmt, err := db.Prepare("SELECT * FROM users WHERE token = ? AND is_active = 1")
-	if err != nil {
-		utils.CheckErr(err, err.Error())
-	}
+	utils.CheckErr(err, nil)
 	err = stmt.QueryRow(token).Scan(&user.Id, &user.FullName, &user.Address, &user.Phone, &user.Email, &user.Password, &user.Hash, &user.IsActive, &user.Token)
 	if err != nil {
 		return nil, err
@@ -42,13 +40,9 @@ func (self *AuthManager) FindActiveByToken(token string) (*models.User, error) {
 func (self *AuthManager) Update(user *models.User) {
 	db := self.db
 	stmt, err := db.Prepare("UPDATE users SET token=? WHERE id = ?")
-	if err != nil {
-		utils.CheckErr(err, err.Error())
-	}
+	utils.CheckErr(err, nil)
 	_, err = stmt.Exec(user.Token, user.Id)
-	if err != nil {
-		utils.CheckErr(err, err.Error())
-	}
+	utils.CheckErr(err, nil)
 }
 
 // Generate token

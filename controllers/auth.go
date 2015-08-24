@@ -4,6 +4,7 @@ import (
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
 	"net/http"
+	"github.com/playaer/myFirstGoProject/di"
 )
 
 type AuthController struct {
@@ -11,22 +12,20 @@ type AuthController struct {
 }
 
 // Show login template
-func (self *AuthController) Login(r render.Render) {
-	di := *self.di
+func (self *AuthController) Login(r render.Render, di *di.DI) {
 	authManager := di.AuthManager()
 	if authManager.IsAuthenticated() {
-		r.Error(403)
+		r.HTML(403, "error/403", nil)
 		return
 	}
 	r.HTML(200, "auth/login", nil)
 }
 
 // Show login template
-func (self *AuthController) LogOut(w http.ResponseWriter, params martini.Params, r render.Render) {
-	di := *self.di
+func (self *AuthController) LogOut(w http.ResponseWriter, params martini.Params, r render.Render, di *di.DI) {
 	authManager := di.AuthManager()
 	if !authManager.IsAuthenticated() {
-		r.Error(403)
+		r.HTML(403, "error/403", nil)
 		return
 	}
 	authManager.Logout()
@@ -36,8 +35,7 @@ func (self *AuthController) LogOut(w http.ResponseWriter, params martini.Params,
 }
 
 // Process login action
-func (self *AuthController) ProcessLogin(w http.ResponseWriter, req *http.Request, r render.Render) {
-	di := *self.di
+func (self *AuthController) ProcessLogin(w http.ResponseWriter, req *http.Request, r render.Render, di *di.DI) {
 	email := req.FormValue("Email")
 	user := di.UserManager().FindActiveByEmail(email)
 	if user == nil {

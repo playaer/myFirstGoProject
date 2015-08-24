@@ -25,9 +25,9 @@ func New() *Config {
 		"root",
 		"?parseTime=true",
 
-		"playaer80@gmail.com",
+		"playaer.my.test@gmail.com",
 		"smtp.gmail.com",
 		"587",
-		"L;jqythb1",
+		"mkmk1980",
 	}
 }

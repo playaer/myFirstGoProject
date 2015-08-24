@@ -5,6 +5,8 @@ import (
 	"github.com/martini-contrib/render"
 	"net/http"
 	"github.com/playaer/myFirstGoProject/utils"
+	"github.com/playaer/myFirstGoProject/di"
+	"strconv"
 )
 
 type UserController struct {
@@ -14,28 +16,21 @@ type UserController struct {
 /**
  * Routes '/', '/users/'
  */
-func (u *UserController) List(r render.Render) {
-	di := *u.di
+func (u *UserController) List(r render.Render, di *di.DI) {
 	userManager := di.UserManager()
-	all, err := userManager.FindAll()
-	if err != nil {
-		// 500
-	}
-
+	all := userManager.FindAll()
 	r.HTML(200, "user/list", all)
 }
 
 /**
  * Route /users/:id/view/
  */
-func (u *UserController) View(params martini.Params, r render.Render) {
-
-	di := *u.di
+func (u *UserController) View(params martini.Params, r render.Render, di *di.DI) {
 	userManager := di.UserManager()
 	id := params["id"]
 	user := userManager.FindById(id)
 	if user == nil {
-		r.Error(404)
+		r.HTML(404, "error/404", nil)
 	} else {
 		r.HTML(200, "user/view", user)
 	}
@@ -45,54 +40,44 @@ func (u *UserController) View(params martini.Params, r render.Render) {
  * Show edit template
  * Route /users/edit/profile/
  */
-func (u *UserController) Edit(r render.Render) {
-	di := *u.di
+func (u *UserController) Edit(r render.Render, di *di.DI) {
 	authManager := di.AuthManager()
 	utils.Debug(authManager)
 	if !authManager.IsAuthenticated() {
-		r.Error(403)
+		r.HTML(403, "error/403", nil)
 		return
 	}
-	userManager := di.UserManager()
 	currentUser := authManager.CurrentUser()
 
-	user := userManager.FindById(currentUser.Id)
-	if user == nil {
-		r.Error(404)
-	} else {
-		r.HTML(200, "user/edit", user)
-	}
+	r.HTML(200, "user/edit", currentUser)
 }
 
 /**
  * Save user
  * Route /users/save/profile/
  */
-func (u *UserController) Save(req *http.Request, r render.Render) {
-	di := *u.di
+func (u *UserController) Save(req *http.Request, r render.Render, di *di.DI) {
 	authManager := di.AuthManager()
 	if !authManager.IsAuthenticated() {
-		r.Error(403)
+		r.HTML(403, "error/403", nil)
 		return
 	}
 	userManager := di.UserManager()
-	id := string(authManager.CurrentUser().Id)
-	user := userManager.FindById(id)
-	if user == nil {
-		r.Error(404)
-		return
-	}
+	currentUser := authManager.CurrentUser()
 
-	newUser := *user
-
+	// clone user
+	newUser := *currentUser
 	newUser.FullName = req.FormValue("FullName")
 	newUser.Address = req.FormValue("Address")
 	newUser.Phone = req.FormValue("Phone")
 
 	userManager.Update(&newUser)
 
-	di.UpdateLogManager().StoreChanges(user, &newUser)
+	// store user updates to log
+	di.UpdateLogManager().StoreChanges(currentUser, &newUser)
 
-	r.Redirect("/users/" + id + "/view/")
+	// redirect
+	strId := strconv.FormatInt(currentUser.Id, 10)
+	r.Redirect("/users/" + strId + "/view/")
 }
 

@@ -3,6 +3,7 @@ package controllers
 import (
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
+	"github.com/playaer/myFirstGoProject/di"
 )
 
 type UpdateLogController struct {
@@ -10,11 +11,10 @@ type UpdateLogController struct {
 }
 
 // Show login template
-func (self *UpdateLogController) List(params martini.Params, r render.Render) {
-	di := *self.di
+func (self *UpdateLogController) List(params martini.Params, r render.Render, di *di.DI) {
 	authManager := di.AuthManager()
 	if !authManager.IsAuthenticated() {
-		r.Error(403)
+		r.HTML(403, "error/403", nil)
 		return
 	}
 	currentUser := authManager.CurrentUser()

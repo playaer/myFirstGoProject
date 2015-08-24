@@ -2,9 +2,9 @@ package utils
 
 import "log"
 
-func CheckErr(err error, msg string) {
+func CheckErr(err error, msg interface{}) {
 	if err != nil {
-		log.Fatalln(msg, err)
+		log.Println("+++++++++++", msg, err)
 	}
 }
 

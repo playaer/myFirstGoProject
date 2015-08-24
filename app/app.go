@@ -31,9 +31,7 @@ func Run() {
 			return
 		}
 		manager.Auth(user)
-
-		utils.Debug(user)
-		utils.Debug("authenticated")
+		utils.Debug("user authenticated")
 	})
 
 	m.Use(render.Renderer(render.Options{
@@ -51,10 +49,13 @@ func Run() {
 		},
 	}))
 
-	di := di.New()
+	m.Use(func(c martini.Context, di *di.DI){
+		c.Next()
+		di.Db().Close()
+		utils.Debug("DB connection closed")
+	})
 
 	userController := new(controllers.UserController)
-	userController.SetDi(di)
 	m.Get("/", userController.List)
 	m.Get("/users/", userController.List)
 	m.Get("/users/:id/view/", userController.View)
@@ -62,19 +63,16 @@ func Run() {
 	m.Post("/users/save/profile/", userController.Save)
 
 	registerController := new(controllers.RegisterController)
-	registerController.SetDi(di)
 	m.Get("/register/", registerController.Register)
 	m.Post("/register/processRegister/", registerController.ProcessRegister)
 	m.Get("/register/activate/:hash/", registerController.ProcessActivate)
 
 	authController := new(controllers.AuthController)
-	authController.SetDi(di)
 	m.Get("/auth/", authController.Login)
 	m.Get("/auth/logout/", authController.LogOut)
 	m.Post("/auth/processLogin/", authController.ProcessLogin)
 
 	updatesController := new(controllers.UpdateLogController)
-	updatesController.SetDi(di)
 	m.Get("/updates/", updatesController.List)
 
 	m.Run()

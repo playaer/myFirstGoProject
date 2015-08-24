@@ -41,19 +41,13 @@ func (self *UpdateLogManager) saveToDb(userUpdate *models.UserUpdate) int64 {
 	db := self.db
 
 	stmt, err := db.Prepare("INSERT INTO user_update(user_id, old_data, new_data, updated_at) VALUES(?, ?, ?, ?)")
-	if err != nil {
-		utils.CheckErr(err, err.Error())
-	}
+	utils.CheckErr(err, nil)
 	oldData, err := json.Marshal(userUpdate.OldData)
 	newData, err := json.Marshal(userUpdate.NewData)
 	res, err := stmt.Exec(userUpdate.UserId, oldData, newData, userUpdate.UpdatedAt)
-	if err != nil {
-		utils.CheckErr(err, err.Error())
-	}
+	utils.CheckErr(err, nil)
 	lastId, err := res.LastInsertId()
-	if err != nil {
-		utils.CheckErr(err, err.Error())
-	}
+	utils.CheckErr(err, nil)
 
 	return lastId
 }
@@ -63,9 +57,7 @@ func (self *UpdateLogManager) FindAll(userId int64) []*models.UserUpdate {
 
 	db := self.db
 	rows, err := db.Query("SELECT updated_at, old_data, new_data FROM user_update WHERE user_id = ? ORDER BY id DESC", userId)
-	if err != nil {
-		utils.CheckErr(err, err.Error())
-	}
+	utils.CheckErr(err, nil)
 	defer rows.Close()
 
 	var oldData, newData []byte
@@ -75,17 +67,13 @@ func (self *UpdateLogManager) FindAll(userId int64) []*models.UserUpdate {
 		err = rows.Scan(&userUpdate.UpdatedAt, &oldData, &newData)
 		json.Unmarshal(oldData, &userUpdate.OldData)
 		json.Unmarshal(newData, &userUpdate.NewData)
-//		userUpdate.NewData = json.Unmarshal(newData, map[string]string)
 
-//		utils.Fatal(userUpdate)
-		if err != nil {
-			utils.CheckErr(err, err.Error())
-		}
+		utils.CheckErr(err, nil)
 		userUpdates = append(userUpdates, userUpdate)
 	}
 
 	if err = rows.Err(); err != nil {
-		utils.CheckErr(err, err.Error())
+		utils.CheckErr(err, nil)
 	}
 
 

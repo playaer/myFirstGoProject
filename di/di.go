@@ -8,17 +8,6 @@ import (
 	"github.com/playaer/myFirstGoProject/config"
 )
 
-//var di DI = DI{}
-
-//type DI interface {
-//	Db() *sql.DB
-//	UserManager() *managers.UserManager
-//	UpdateLogManager() *managers.UpdateLogManager
-//	AuthManager() *managers.AuthManager
-//	Config() *config.Config
-//	Mailer() *utils.Mailer
-//}
-
 type DI struct {
 	db *sql.DB
 	userManager *managers.UserManager
@@ -29,8 +18,6 @@ type DI struct {
 }
 
 func New() *DI {
-	utils.Debug("di init!")
-
 	return new(DI)
 }
 
@@ -45,6 +32,7 @@ func (di *DI) Db() *sql.DB {
 			utils.CheckErr(err, "sql.Ping failed")
 		}
 		di.db = db
+		utils.Debug("DB connection open!")
 	}
 	return di.db
 }
@@ -72,12 +60,10 @@ func (di *DI) UpdateLogManager() *managers.UpdateLogManager {
 // Get auth manager
 func (di *DI) AuthManager() *managers.AuthManager {
 	if (di.authManager == nil) {
-		utils.Debug("auth manager init!")
 		di.authManager = new(managers.AuthManager)
 		db := di.Db()
 		di.authManager.SetDb(db)
 	}
-	utils.Debug("auth manager get!")
 
 	return di.authManager
 }
