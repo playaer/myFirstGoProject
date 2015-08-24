@@ -14,7 +14,7 @@ type RegisterController struct {
 func (self *RegisterController) Register(params martini.Params, r render.Render) {
 	di := *self.di
 	authManager := di.AuthManager()
-	if !authManager.IsAuthenticated() {
+	if authManager.IsAuthenticated() {
 		r.Error(403)
 		return
 	}

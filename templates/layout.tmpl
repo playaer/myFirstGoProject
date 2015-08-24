@@ -32,14 +32,7 @@
     <div class="ui container">
         <a class="active item" href="/users/">Users</a>
         <div class="right menu">
-
-            <div class="item">
-                <a href="/auth/" class="ui button">Log in</a>
-            </div>
-            <div class="item">
-                <a href="/register/" class="ui primary button">Sign Up</a>
-            </div>
-
+            {{ if isAuthenticated }}
             <div class="item">
                 <a href="/auth/logout/" class="ui button">Log Out</a>
             </div>
@@ -49,7 +42,14 @@
             <div class="item">
                 <a href="/updates/" class="ui button">Updates</a>
             </div>
-
+            {{ else }}
+            <div class="item">
+                <a href="/auth/" class="ui button">Log in</a>
+            </div>
+            <div class="item">
+                <a href="/register/" class="ui primary button">Sign Up</a>
+            </div>
+            {{ end }}
         </div>
     </div>
 </div>

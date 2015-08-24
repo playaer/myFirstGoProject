@@ -9,25 +9,17 @@ import (
 	"time"
 	"net/http"
 	"github.com/playaer/myFirstGoProject/managers"
+	"github.com/playaer/myFirstGoProject/utils"
 )
 
-func Run(di *di.DI) {
+func Run() {
 	m := martini.Classic()
 
-	d := *di
-	authManager := d.AuthManager()
-	m.Map(authManager)
-	m.Use(render.Renderer(render.Options{
-		Layout: "layout",
-		Directory: "templates",
-		Funcs: []template.FuncMap{
-			{
-				"formatTime": func(t *time.Time) string {
-					return t.Format(time.Stamp)
-				},
-			},
-		},
-	}))
+	m.Use(func(c martini.Context) {
+		d := di.New()
+		c.Map(d)
+		c.Map(d.AuthManager())
+	})
 
 	m.Use(func(req *http.Request, manager *managers.AuthManager) {
 		tokenCookie, err := req.Cookie("gousertoken")
@@ -39,8 +31,27 @@ func Run(di *di.DI) {
 			return
 		}
 		manager.Auth(user)
+
+		utils.Debug(user)
+		utils.Debug("authenticated")
 	})
 
+	m.Use(render.Renderer(render.Options{
+		Layout: "layout",
+		Directory: "templates",
+		Funcs: []template.FuncMap{
+			{
+				"formatTime": func(t *time.Time) string {
+					return t.Format(time.Stamp)
+				},
+				"isAuthenticated": func() bool {
+					return false//manager.IsAuthenticated()
+				},
+			},
+		},
+	}))
+
+	di := di.New()
 
 	userController := new(controllers.UserController)
 	userController.SetDi(di)

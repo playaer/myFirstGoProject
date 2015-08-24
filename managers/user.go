@@ -43,7 +43,7 @@ func (self *UserManager) FindAll() ([]*models.User, error) {
 }
 
 // Find user by id
-func (self *UserManager) FindById(id string) *models.User {
+func (self *UserManager) FindById(id interface{}) *models.User {
 	db := self.db
 	user := new(models.User)
 	stmt, err := db.Prepare("SELECT * FROM users WHERE id =  ?")

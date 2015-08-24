@@ -22,7 +22,7 @@ func New() *Config {
 		"mysql",
 		"first_go",
 		"root",
-		"",
+		"root",
 		"?parseTime=true",
 
 		"playaer80@gmail.com",

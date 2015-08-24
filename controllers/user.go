@@ -4,6 +4,7 @@ import (
 	"github.com/go-martini/martini"
 	"github.com/martini-contrib/render"
 	"net/http"
+	"github.com/playaer/myFirstGoProject/utils"
 )
 
 type UserController struct {
@@ -47,13 +48,15 @@ func (u *UserController) View(params martini.Params, r render.Render) {
 func (u *UserController) Edit(r render.Render) {
 	di := *u.di
 	authManager := di.AuthManager()
+	utils.Debug(authManager)
 	if !authManager.IsAuthenticated() {
 		r.Error(403)
 		return
 	}
 	userManager := di.UserManager()
-	id := string(authManager.CurrentUser().Id)
-	user := userManager.FindById(id)
+	currentUser := authManager.CurrentUser()
+
+	user := userManager.FindById(currentUser.Id)
 	if user == nil {
 		r.Error(404)
 	} else {

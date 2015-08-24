@@ -2,10 +2,9 @@ package main
 
 import (
 	app "github.com/playaer/myFirstGoProject/app"
-	"github.com/playaer/myFirstGoProject/di"
 )
 
 func main() {
-	di := di.New()
-	app.Run(&di)
+
+	app.Run()
 }
