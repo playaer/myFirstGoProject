@@ -6,7 +6,7 @@
         <th width="40%">After</th>
     </tr></thead>
     <tbody>
-    {{range $index, $record := .}}
+    {{range $index, $record := .Data}}
     <tr>
         <td colspan="3" class="ui center aligned">{{ $record.UpdatedAt | formatTime }}</td>
     </tr>

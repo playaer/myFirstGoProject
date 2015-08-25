@@ -21,6 +21,7 @@ func Run() {
 		c.Map(d.AuthManager())
 	})
 
+	// authenticate user
 	m.Use(func(req *http.Request, manager *managers.AuthManager) {
 		tokenCookie, err := req.Cookie("gousertoken")
 		if err != nil {
@@ -34,6 +35,7 @@ func Run() {
 		utils.Debug("user authenticated")
 	})
 
+	// setup renderer
 	m.Use(render.Renderer(render.Options{
 		Layout: "layout",
 		Directory: "templates",
@@ -42,13 +44,19 @@ func Run() {
 				"formatTime": func(t *time.Time) string {
 					return t.Format(time.Stamp)
 				},
-				"isAuthenticated": func() bool {
-					return false//manager.IsAuthenticated()
-				},
 			},
 		},
 	}))
 
+	// predefined template vars
+	m.Use(func(c martini.Context, manager *managers.AuthManager) {
+		tplData := utils.TemplateVars{}
+		tplData.AddVar("isAuthenticated", manager.IsAuthenticated())
+
+		c.Map(tplData)
+	})
+
+	// after request actions
 	m.Use(func(c martini.Context, di *di.DI){
 		c.Next()
 		di.Db().Close()

@@ -16,23 +16,25 @@ type UserController struct {
 /**
  * Routes '/', '/users/'
  */
-func (u *UserController) List(r render.Render, di *di.DI) {
+func (u *UserController) List(r render.Render, di *di.DI, templateVars utils.TemplateVars) {
 	userManager := di.UserManager()
 	all := userManager.FindAll()
-	r.HTML(200, "user/list", all)
+	templateVars.SetData(all)
+	r.HTML(200, "user/list", templateVars)
 }
 
 /**
  * Route /users/:id/view/
  */
-func (u *UserController) View(params martini.Params, r render.Render, di *di.DI) {
+func (u *UserController) View(params martini.Params, r render.Render, di *di.DI, templateVars utils.TemplateVars) {
 	userManager := di.UserManager()
 	id := params["id"]
 	user := userManager.FindById(id)
 	if user == nil {
-		r.HTML(404, "error/404", nil)
+		r.HTML(404, "error/404", templateVars)
 	} else {
-		r.HTML(200, "user/view", user)
+		templateVars.SetData(user)
+		r.HTML(200, "user/view", templateVars)
 	}
 }
 
@@ -40,16 +42,16 @@ func (u *UserController) View(params martini.Params, r render.Render, di *di.DI)
  * Show edit template
  * Route /users/edit/profile/
  */
-func (u *UserController) Edit(r render.Render, di *di.DI) {
+func (u *UserController) Edit(r render.Render, di *di.DI, templateVars utils.TemplateVars) {
 	authManager := di.AuthManager()
 	utils.Debug(authManager)
 	if !authManager.IsAuthenticated() {
-		r.HTML(403, "error/403", nil)
+		r.HTML(403, "error/403", templateVars)
 		return
 	}
 	currentUser := authManager.CurrentUser()
-
-	r.HTML(200, "user/edit", currentUser)
+	templateVars.SetData(currentUser)
+	r.HTML(200, "user/edit", templateVars)
 }
 
 /**

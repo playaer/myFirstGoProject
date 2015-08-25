@@ -1,26 +1,26 @@
 <div class="ui segments">
 
     <div class="ui segment center aligned">
-        <h1 class="center aligned">{{ .FullName }}</h1>
+        <h1 class="center aligned">{{ .Data.FullName }}</h1>
     </div>
 
     <table class="ui very basic table">
         <tbody>
         <tr>
             <td class="right aligned"><strong>Id:</strong></td>
-            <td>{{ .Id }}</td>
+            <td>{{ .Data.Id }}</td>
         </tr>
         <tr>
             <td class="right aligned"><strong>Email:</strong></td>
-            <td>{{ .Email }}</td>
+            <td>{{ .Data.Email }}</td>
         </tr>
         <tr>
             <td class="right aligned"><strong>Address:</strong></td>
-            <td>{{ .Address }}</td>
+            <td>{{ .Data.Address }}</td>
         </tr>
         <tr>
             <td class="right aligned"><strong>Phone:</strong></td>
-            <td>{{ .Phone }}</td>
+            <td>{{ .Data.Phone }}</td>
         </tr>
         </tbody>
     </table>

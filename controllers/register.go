@@ -5,6 +5,7 @@ import (
 	"github.com/martini-contrib/render"
 	"net/http"
 	"github.com/playaer/myFirstGoProject/di"
+	"github.com/playaer/myFirstGoProject/utils"
 )
 
 type RegisterController struct {
@@ -12,13 +13,13 @@ type RegisterController struct {
 }
 
 // Register Action, show register template form
-func (self *RegisterController) Register(params martini.Params, r render.Render, di *di.DI) {
+func (self *RegisterController) Register(params martini.Params, r render.Render, di *di.DI, templateVars utils.TemplateVars) {
 	authManager := di.AuthManager()
 	if authManager.IsAuthenticated() {
-		r.HTML(403, "error/403", nil)
+		r.HTML(403, "error/403", templateVars)
 		return
 	}
-	r.HTML(200, "register/register", nil)
+	r.HTML(200, "register/register", templateVars)
 }
 
 // Process register: check form, create new inactive user and send activation email
@@ -39,6 +40,7 @@ func (self *RegisterController) ProcessRegister(params martini.Params, req *http
 
 	userManager.Create(user)
 
+	// send email
 	mailer := di.Mailer()
 	go mailer.Send(mailer.BuildRegistrationMail(user))
 
@@ -48,13 +50,13 @@ func (self *RegisterController) ProcessRegister(params martini.Params, req *http
 }
 
 // Check activation link and activate user
-func (self *RegisterController) ProcessActivate(params martini.Params, req *http.Request, r render.Render, di *di.DI) {
+func (self *RegisterController) ProcessActivate(params martini.Params, req *http.Request, r render.Render, di *di.DI, templateVars utils.TemplateVars) {
 
 	userManager := di.UserManager()
 	user := userManager.FindInActiveByHash(params["hash"])
 
 	if user == nil {
-		r.HTML(404, "error/404", nil)
+		r.HTML(404, "error/404", templateVars)
 		return
 	}
 

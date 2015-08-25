@@ -5,6 +5,7 @@ import (
 	"github.com/martini-contrib/render"
 	"net/http"
 	"github.com/playaer/myFirstGoProject/di"
+	"github.com/playaer/myFirstGoProject/utils"
 )
 
 type AuthController struct {
@@ -12,20 +13,20 @@ type AuthController struct {
 }
 
 // Show login template
-func (self *AuthController) Login(r render.Render, di *di.DI) {
+func (self *AuthController) Login(r render.Render, di *di.DI, templateVars utils.TemplateVars) {
 	authManager := di.AuthManager()
 	if authManager.IsAuthenticated() {
-		r.HTML(403, "error/403", nil)
+		r.HTML(403, "error/403", templateVars)
 		return
 	}
-	r.HTML(200, "auth/login", nil)
+	r.HTML(200, "auth/login", templateVars)
 }
 
 // Show login template
-func (self *AuthController) LogOut(w http.ResponseWriter, params martini.Params, r render.Render, di *di.DI) {
+func (self *AuthController) LogOut(w http.ResponseWriter, params martini.Params, r render.Render, di *di.DI, templateVars utils.TemplateVars) {
 	authManager := di.AuthManager()
 	if !authManager.IsAuthenticated() {
-		r.HTML(403, "error/403", nil)
+		r.HTML(403, "error/403", templateVars)
 		return
 	}
 	authManager.Logout()
@@ -41,7 +42,7 @@ func (self *AuthController) ProcessLogin(w http.ResponseWriter, req *http.Reques
 	if user == nil {
 		// not authenticated
 		// message: Invalid credentials
-		r.HTML(200, "auth/login", "")
+		r.Redirect("/auth/")
 		return
 	}
 
@@ -58,6 +59,6 @@ func (self *AuthController) ProcessLogin(w http.ResponseWriter, req *http.Reques
 	} else {
 		// not authorized
 		// message: Invalid credentials
-		r.HTML(200, "auth/login", "")
+		r.Redirect("/auth/")
 	}
 }
