@@ -67,15 +67,8 @@ func Run() {
 	m.Get("/", userController.List)
 	m.Get("/users/", userController.List)
 	m.Get("/users/:id/view/", userController.View)
-
-	// authorized access
-
-	m.Group("/books", func(r martini.Router) {
-		m.Get("/users/edit/profile/", userController.Edit)
-		m.Post("/users/save/profile/", userController.Save)
-	}, func (manager *managers.AuthManager) {
-		return manager.IsAuthenticated()
-	})
+	m.Get("/users/edit/profile/", userController.Edit)
+	m.Post("/users/save/profile/", userController.Save)
 
 	registerController := new(controllers.RegisterController)
 	m.Get("/register/", registerController.Register)

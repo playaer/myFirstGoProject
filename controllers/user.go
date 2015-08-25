@@ -44,7 +44,6 @@ func (u *UserController) View(params martini.Params, r render.Render, di *di.DI,
  */
 func (u *UserController) Edit(r render.Render, di *di.DI, templateVars utils.TemplateVars) {
 	authManager := di.AuthManager()
-	utils.Debug(authManager)
 	if !authManager.IsAuthenticated() {
 		r.HTML(403, "error/403", templateVars)
 		return
@@ -58,10 +57,10 @@ func (u *UserController) Edit(r render.Render, di *di.DI, templateVars utils.Tem
  * Save user
  * Route /users/save/profile/
  */
-func (u *UserController) Save(req *http.Request, r render.Render, di *di.DI) {
+func (u *UserController) Save(req *http.Request, r render.Render, di *di.DI, templateVars utils.TemplateVars) {
 	authManager := di.AuthManager()
 	if !authManager.IsAuthenticated() {
-		r.HTML(403, "error/403", nil)
+		r.HTML(403, "error/403", templateVars)
 		return
 	}
 	userManager := di.UserManager()
