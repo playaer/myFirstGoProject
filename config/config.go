@@ -1,5 +1,7 @@
 package config
 
+import "os"
+
 type Config struct {
 	SiteDomain string
 
@@ -17,17 +19,17 @@ type Config struct {
 
 func New() *Config {
 	return &Config{
-		"http://localhost:3000",
+		os.Getenv("APP_DOMAIN"),
 
 		"mysql",
-		"first_go",
-		"root",
-		"root",
+		os.Getenv("APP_DB_NAME"),
+		os.Getenv("APP_DB_USER"),
+		os.Getenv("APP_DB_PASS"),
 		"?parseTime=true",
 
-		"playaer.my.test@gmail.com",
-		"smtp.gmail.com",
-		"587",
-		"mkmk1980",
+		os.Getenv("APP_EMAIL_USER"),
+		os.Getenv("APP_EMAIL_HOST"),
+		os.Getenv("APP_EMAIL_PORT"),
+		os.Getenv("APP_EMAIL_PASS"),
 	}
 }
